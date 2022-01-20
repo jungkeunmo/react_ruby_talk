@@ -26,6 +26,10 @@ const NavWrapper = styled.section`
 class App extends React.Component {
     render() {
         return <>
+            <Routes>
+                <Route exact path="/" element={<Login />} />
+            </Routes>
+
             <ContentWrapper>
                 <Routes>
                     <Route exact path="/friend" element={<Friend />} />
@@ -34,8 +38,14 @@ class App extends React.Component {
                     <Route exact path="/setting" element={<Setting />} />
                 </Routes>
             </ContentWrapper>
+            
             <NavWrapper>
-                <BottomNav />
+                <Routes>
+                    <Route exact path="/friend" element={<BottomNav/>} />
+                    <Route exact path="/message" element={<BottomNav />} />
+                    <Route exact path="/profile" element={<BottomNav />} />
+                    <Route exact path="/setting" element={<BottomNav />} />
+                </Routes>
             </NavWrapper>
         </>
     };
