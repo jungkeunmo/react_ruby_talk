@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {Button, message} from "antd";
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const Whole = styled.section`
     width: 100%;
@@ -20,11 +21,12 @@ const AppTitle = styled.h2`
 
 const LoginBox = styled.div`
     width: 80%;
-    height: 100px;
+    height: 90px;
     border-radius: 6px;
 
     padding: 10px;
     box-shadow: 4px 4px 9px #adadad;
+    margin-bottom: 60px;
 `;
 
 const InputGuide = styled.span`
@@ -44,6 +46,11 @@ const InputEmail = styled.input`
     background: none;
     padding: 0px 5px;
 `;
+
+const SignButton = styled(Button)`
+    width: 80%;
+    margin-top: 10px;
+`
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -73,11 +80,17 @@ const Login = () => {
     };
 
 
-    const loginAction = () => {
+    const loginAction = async() => {
 
         if (email === "") {
             return message.error("이메일을 입력해주세요.");
         };
+        
+        const result = await axios.post("http://localhost:4000/api/user/emailCheck", {
+            email,
+        });
+
+        console.log(result);
 
         setStep(2);
     };
@@ -99,18 +112,22 @@ const Login = () => {
                 </InputGuide >
 
                 {step === 1 ? (
-                    <InputEmail placeholder="ruby@talk.com" value={email} onChange={onChangeInput}></InputEmail>
+                    <InputEmail placeholder="ruby@talk.com" value={email} onChange={onChangeInput} />
                     ) : (
-                    <InputEmail value={code} onChange={onChangeCode}/>
+                    <InputEmail value={code} onChange={onChangeCode} />
                 )} 
 
-                <Button size="small" type="primary" style={{ float: "right"}} onClick={step === 1 ? () => loginAction() : () => codeCheckAction()}>
-                    {step === 1 ? "LOGIN" : "CHECK"}
-                </Button>
-
             </LoginBox>
+            <SignButton
+            type="primary" 
+            onClick={step === 1 ? () => loginAction() : () => codeCheckAction()}>
+                {step === 1 ? "SIGN IN" : "CHECK"}
+            </SignButton>
+            <SignButton type="default" 
+            >SIGN UP    
+            </SignButton>
         </Whole>
     ;
 };
 
-export default Login ;
+export default Login;
