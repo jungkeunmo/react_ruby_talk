@@ -40,7 +40,7 @@ const SendTextArea = styled(Input.TextArea)`
    resize: none;
 `;
 
-const FriendBox = () => {
+const FriendBox = ({ key, name, avator, status}) => {
 
     const [sendModal, setSendModal] = useState(false);
     // 
@@ -54,12 +54,12 @@ const FriendBox = () => {
 
     return <Box>
         <InnerBox width="25%">
-            <ProfileImage src="https://i.pinimg.com/474x/5f/e8/e4/5fe8e4959652afb168f27ed931d9aa33.jpg"/>
-            <ProfileName onClick={() => sendOpen(4)}>익명</ProfileName>
+            <ProfileImage src={avator}/>
+            <ProfileName onClick={() => sendOpen(4)}>{name}</ProfileName>
         </InnerBox>
 
         <InnerBox  width="75%">
-            <span>상태메세지..</span>
+            <span>{status}</span>
         </InnerBox>
 
         <Modal title="메세지 보내기" visible={sendModal}  onCancel={() => sendClose()}>

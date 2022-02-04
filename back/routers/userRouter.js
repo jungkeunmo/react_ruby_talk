@@ -29,7 +29,7 @@ const sendMail = async (email) => {
         if(err) {
             console.log(err);        
         }else {
-            console.log(info);
+            console.log("Email Send Success :", info);
         };
     });
 };
@@ -47,9 +47,6 @@ router.post("/emailCheck", async(req, res, next) => {
     `;
 
     db.query(searchQuery, (err, rows) => {
-
-        console.log(err);
-
         if(rows.length === 0) {
             return res.status(400),json({result : false});
         }
@@ -60,9 +57,6 @@ router.post("/emailCheck", async(req, res, next) => {
         const num4 = Math.floor(Math.random() * 10);
 
         const code = "" + num1 + num2 + num3 + num4;
-
-        console.log(code);
-        console.log(rows[0].id);
 
         const codeUpdateQuery = `
             UPDATE user
@@ -116,7 +110,7 @@ router.post("/checkCode", (req, res, next) => {
                     avatar,
                     statusMsg
               FROM  user
-             WHERE   email= "${email}"
+             WHERE   email = "${email}"
                AND secretCode = ${code}
         `;
 
@@ -125,13 +119,42 @@ router.post("/checkCode", (req, res, next) => {
                 return res.status(400).send("로그인을 다시시도 해주세요");
             }; 
 
-            console.log(rows);
-
-            return res.status(200).json({ result: true})
+            return res.status(200).json(rows[0])
         });
     } catch (error) {
         console.log(error);
         return res.status(400).send("보안코드가 올바르지 않음");
+    }
+})
+
+router.post("/friend/list", (req, res, next) => {
+    const {me} = req.body;
+
+    try {
+        const listQuery = `
+            SELECT  id, 
+		            nickname,
+                    statusMsg,
+                    avatar
+              FROM user
+             WHERE id IN (
+	            SELECT whom
+	              FROM friend
+	             WHERE who = ${me}
+            )
+        `;
+
+        db.query(listQuery, (err, rows) => {
+            if (err) {
+                console.error(err);
+                return res.status(400).send("성공");
+            }
+
+            return res.status(200).json(rows);
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send("실패")
     }
 })
 

@@ -90,8 +90,6 @@ const Login = () => {
             email,
         });
 
-        console.log(result);
-
         setStep(2);
     };
 
@@ -101,13 +99,14 @@ const Login = () => {
             code,
         })
 
-        console.log(result);
-
-        return;
-
         await localStorage.setItem("ruby_login", true);
+        await localStorage.setItem("ruby_user_nickname", result.data.nickname);
+        await localStorage.setItem("ruby_user_avatar", result.data.avatar);
+        await localStorage.setItem("ruby_user_id", result.data.id);
+        await localStorage.setItem("ruby_user_statusMsg", result.data.statusMsg);
+        await localStorage.setItem("ruby_user_email", result.data.email);
 
-        message.success("Welcome to RUBY TALK");
+        message.success(`${result.data.nickname}님, 환영 합니다.`);
 
         navigate("/friend");
     };
