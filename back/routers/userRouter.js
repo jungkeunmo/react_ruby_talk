@@ -1,6 +1,38 @@
 const { json } = require("express");
 const express = require("express");
 const db = require("../db");
+const nodemailer = require("nodemailer");
+const smtpPool = require("nodemailer-smtp-pool");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const smtpTransport = nodemailer.createTransport(
+    smtpPool({
+      service: "Gmail",
+      host: "localhost",
+      port: "465",
+      tls: {
+        rejectUnauthorize: false,
+      },
+  
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+      maxConnections: 5,
+      maxMessages: 10,
+    })
+);
+
+const sendMail = async (email) => {
+    await smtpTransport.sendMail(email, (err, info) => {
+        if(err) {
+            console.log(err);        
+        }else {
+            console.log(info);
+        };
+    });
+};
 
 const router = express.Router();
 
@@ -44,6 +76,14 @@ router.post("/emailCheck", async(req, res, next) => {
                 return res.status(400).json({ result: false});
             };
 
+            const  sendData = {
+                from : "4leaf-edu.com",
+                to : email,
+                subject : "안녕하세요 로그인 보안 코드 입니다.",
+                html : `보안코드는 <h2>${code}<h2> 입니다`
+            }
+
+            sendMail(sendData);
             // smtp pool
 
             // 먼저 발신자의 정보를 등록한다 (앱 비밀번호)
@@ -64,5 +104,35 @@ router.post("/emailCheck", async(req, res, next) => {
 
     return res.status(200).send("이메일 로그인 요청");
 });
+
+router.post("/checkCode", (req, res, next) => {
+    const { email, code } = req.body;
+
+    try {
+        const checkQuery = `
+            SELECT  id, 
+                    email,
+                    nickname,
+                    avatar,
+                    statusMsg
+              FROM  user
+             WHERE   email= "${email}"
+               AND secretCode = ${code}
+        `;
+
+        db.query(checkQuery, (err, rows) => {
+            if(err) {
+                return res.status(400).send("로그인을 다시시도 해주세요");
+            }; 
+
+            console.log(rows);
+
+            return res.status(200).json({ result: true})
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send("보안코드가 올바르지 않음");
+    }
+})
 
 module.exports = router;

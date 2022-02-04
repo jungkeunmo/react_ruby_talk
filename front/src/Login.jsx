@@ -96,6 +96,15 @@ const Login = () => {
     };
 
     const codeCheckAction = async () => {
+        const result = await axios.post("http://localhost:4000/api/user/checkCode", {
+            email,
+            code,
+        })
+
+        console.log(result);
+
+        return;
+
         await localStorage.setItem("ruby_login", true);
 
         message.success("Welcome to RUBY TALK");
