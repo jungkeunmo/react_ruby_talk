@@ -36,6 +36,7 @@ const Friend = () => {
         {fList.map((f) => (
             <FriendBox 
                 key={f.id} 
+                id={f.id}
                 name={f.nickname} 
                 avatar={f.avatar} 
                 status={f.statusMsg}

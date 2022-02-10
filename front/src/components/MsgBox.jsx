@@ -26,7 +26,7 @@ const Content = styled.p`
   padding: 5px;
 `;
 
-const MsgBox = ({ isSend }) => {
+const MsgBox = ({id, isSend, content, isRead, createdAt, who, whom,whoName, whomName }) => {
   const [contentModal, setContentModal] = useState(false);
 
   const modalToggle = () => {
@@ -37,8 +37,8 @@ const MsgBox = ({ isSend }) => {
     return (
       
         <Wrapper isSend={isSend} onClick={() => modalToggle()}>
-          <TopMsg isSend={isSend}>보낸 메세지</TopMsg>
-          <Content>내용 내용 내용....</Content>
+          <TopMsg isSend={isSend}>보낸 메세지({whomName})</TopMsg>
+          <Content>{content}</Content>
 
           <Modal
             title="쪽지함 내용"
@@ -46,7 +46,7 @@ const MsgBox = ({ isSend }) => {
             footer={null}
             onCancel={() => modalToggle()}
           >
-            <p>블라블라블라.....</p>
+            <p>{content}</p>
           </Modal>
         </Wrapper>
      
@@ -55,8 +55,8 @@ const MsgBox = ({ isSend }) => {
     return (
       
         <Wrapper isSend={isSend} onClick={() => modalToggle()}>
-          <TopMsg isSend={isSend}>받은 메세지</TopMsg>
-          <Content>내용 내용 내용....</Content>
+          <TopMsg isSend={isSend}>받은 메세지({whoName})</TopMsg>
+          <Content>{content}</Content>
 
           <Modal
             title="쪽지함 내용"
@@ -64,7 +64,7 @@ const MsgBox = ({ isSend }) => {
             footer={null}
             onCancel={() => modalToggle()}
           >
-            <p>블라블라블라.....</p>
+            <p>{content}</p>
           </Modal>
         </Wrapper>
       

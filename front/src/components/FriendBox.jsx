@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import styled from "styled-components";
-import { Image, Modal, Input,  } from "antd";
+import { Image, Modal, Input, message } from "antd";
+import axios from "axios";
 
 const Box = styled.div`
     width: 100%;
@@ -40,9 +41,14 @@ const SendTextArea = styled(Input.TextArea)`
    resize: none;
 `;
 
-const FriendBox = ({ key, name, avator, status}) => {
+const FriendBox = ({ id , name, avator, status}) => {
 
     const [sendModal, setSendModal] = useState(false);
+    const [sendContent, setSendContent ] = useState("");
+
+    const contentOnChange = useCallback((event) => {
+        setSendContent(event.target.value);
+    }, [sendContent]);
     // 
     const sendOpen = (pk) => {
         setSendModal(true);
@@ -51,6 +57,31 @@ const FriendBox = ({ key, name, avator, status}) => {
     const sendClose = () => {
         setSendModal(false)
     }
+
+    // Data Sekection
+    // 현재나의 아디
+    // 누구한테 보낼지, 메지지를 받을 사람의 아이디
+    // 뭐라고 보넬지 내용
+    // 뺵에다 보내자!
+
+    const sendMessateAction = useCallback(async() => {
+        const callResult = await axios.post("http://localhost:4000/api/message/sendMessage",
+            {
+                who: localStorage.getItem("ruby_user_id"),
+                whom: id,
+                content: sendContent,
+            }
+        )
+
+        if(callResult.data === "성공") {
+            message.success("메세지가 전송됨")
+        } else {
+            message.error("실패")
+        }
+
+        sendClose();
+        setSendContent("");
+    }, [sendContent]);
 
     return <Box>
         <InnerBox width="25%">
@@ -62,8 +93,8 @@ const FriendBox = ({ key, name, avator, status}) => {
             <span>{status}</span>
         </InnerBox>
 
-        <Modal title="메세지 보내기" visible={sendModal}  onCancel={() => sendClose()}>
-            <SendTextArea allowClear={true} rows={10}/>
+        <Modal title="메세지 보내기" visible={sendModal}  onCancel={() => sendClose()} onOk={sendMessateAction}>
+            <SendTextArea allowClear={true} rows={10} value={sendContent} onChange={contentOnChange}/>
         </Modal>
     </Box>
 };
