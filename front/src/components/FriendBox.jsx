@@ -41,7 +41,7 @@ const SendTextArea = styled(Input.TextArea)`
    resize: none;
 `;
 
-const FriendBox = ({ id , name, avator, status}) => {
+const FriendBox = ({ id , name, avatar, status}) => {
 
     const [sendModal, setSendModal] = useState(false);
     const [sendContent, setSendContent ] = useState("");
@@ -85,7 +85,7 @@ const FriendBox = ({ id , name, avator, status}) => {
 
     return <Box>
         <InnerBox width="25%">
-            <ProfileImage src={avator}/>
+            <ProfileImage src={avatar}/>
             <ProfileName onClick={() => sendOpen(4)}>{name}</ProfileName>
         </InnerBox>
 

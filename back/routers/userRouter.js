@@ -60,9 +60,9 @@ router.post("/emailCheck", async(req, res, next) => {
 
         const codeUpdateQuery = `
             UPDATE user
-            SET secretCode = ${code},
+               SET secretCode = ${code},
 	        updatedAt = now()
-            WHERE	id = ${rows[0].id}  
+             WHERE	id = ${rows[0].id}  
         `;
 
         db.query(codeUpdateQuery, (err, rows) => {
